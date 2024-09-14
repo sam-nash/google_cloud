@@ -1,13 +1,24 @@
 # Google Cloud
 
+Source [Google Cloud](https://partner.cloudskillsboost.google/paths/83)
+
 ## Resource Organization
 
 Google Cloud’s resource hierarchy contains four levels, and starting from the bottom up they are: resources, projects, folders, and an organization node.
+
 At the first level are resources. These represent virtual machines, Cloud Storage buckets, tables in BigQuery, or anything else in Google Cloud.
+
 Resources are organized into projects, which sit on the second level.
+
 Projects can be organized into folders, or even subfolders.These sit at the third level.
+
 And then at the top level is an organization node, which encompasses all the projects, folders, and resources in your organization.
-It’s important to understand this resource hierarchy because it directly relates to how policies are managed and applied when you use Google Cloud.Policies can be defined at the project, folder, and organization node levels.Some Google Cloud services allow policies to be applied to individual resources, too.Policies are also inherited downward.This means that if you apply a policy to a folder, it will also apply to all of the projects within that folder.
+
+It’s important to understand this resource hierarchy because it directly relates to how policies are managed and applied when you use Google Cloud.
+
+Policies can be defined at the project, folder, and organization node levels.Some Google Cloud services allow policies to be applied to individual resources, too.
+
+Policies are also inherited downward.This means that if you apply a policy to a folder, it will also apply to all of the projects within that folder.
 
 Projects are the basis for enabling and using Google Cloud services, like managing APIs, enabling billing, adding and removing collaborators, and enabling other Google services.
 
@@ -227,7 +238,7 @@ Cloud Identity is available in a free edition and also in a premium edition that
 
 If you’re a Google Cloud customer who is also a Google Workspace customer, this functionality is already available to you in the Google Admin Console.
 
-# Interacting with Google Cloud
+## Interacting with Google Cloud
 
 There are four ways to access and interact with Google Cloud.
 
