@@ -1,10 +1,3 @@
-terraform {
-  backend "gcs" {
-    bucket = "${var.project_id}-terraform-state"
-    prefix = "terraform/state"
-  }
-}
-
 # Configure the Google Cloud provider
 provider "google" {
   project = var.project_id
