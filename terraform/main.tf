@@ -41,14 +41,14 @@ resource "google_iam_workload_identity_pool_provider" "provider" {
     "google.subject"       = "assertion.sub"
     "attribute.actor"      = "assertion.actor"
     "attribute.repository" = "assertion.repository"
-    "attribute.aud"        = "assertion.aud"
+    "attribute.aud"         = "assertion.aud"
   }
   attribute_condition = "attribute.org == \"${var.github_org}\""
 }
 
 # Create a Service Account
 resource "google_service_account" "sa" {
-  account_id   = var.service_account_id
+  account_id   =  var.service_account_id
   display_name = var.service_account_display_name
 }
 
