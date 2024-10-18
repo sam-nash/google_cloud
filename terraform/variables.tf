@@ -77,9 +77,3 @@ variable "github_org" {
   description = "The GitHub organization"
   type        = string
 }
-
-# Deine the GitHub runner token
-variable "github_runner_token" {
-  description = "The GitHub runner token"
-  type        = string
-}
