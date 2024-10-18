@@ -1,3 +1,10 @@
+terraform {
+  backend "gcs" {
+    bucket = "${var.project_id}-terraform-state"
+    prefix = "terraform/state"
+  }
+}
+
 # Configure the Google Cloud provider
 provider "google" {
   project = var.project_id
@@ -37,6 +44,19 @@ resource "google_project_service" "sts" {
   service = "sts.googleapis.com"
 }
 
+# Create a Service Account
+resource "google_service_account" "sa" {
+  account_id   =  var.service_account_id
+  display_name = var.service_account_display_name
+}
+
+# Grant the Workload Identity User role to the service account
+resource "google_project_iam_member" "workload_identity_user" {
+  project = var.project_id
+  role    = "roles/iam.workloadIdentityUser"
+  member  = "serviceAccount:${google_service_account.sa.email}"
+}
+
 # Create a Workload Identity Pool
 resource "google_iam_workload_identity_pool" "pool" {
   provider                  = google
@@ -62,21 +82,14 @@ resource "google_iam_workload_identity_pool_provider" "provider" {
   attribute_condition = "attribute.org == \"${var.github_org}\""
 }
 
-# Create a Service Account
-resource "google_service_account" "sa" {
-  account_id   =  var.service_account_id
-  display_name = var.service_account_display_name
-}
-
 # Grant the Workload Identity User role to the service account
-# resource "google_service_account_iam_binding" "binding" {
-#   service_account_id = google_service_account.sa.name
-#   role               = "roles/iam.workloadIdentityUser"
-#   members = [
-#     "principalSet://iam.googleapis.com/projects/${var.project_number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.pool.workload_identity_pool_id}/attribute.org/${var.github_org}"
-#   ]
-# }
-
+resource "google_service_account_iam_binding" "binding" {
+  service_account_id = google_service_account.sa.name
+  role               = "roles/iam.workloadIdentityUser"
+  members = [
+    "principalSet://iam.googleapis.com/projects/${var.project_number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.pool.workload_identity_pool_id}/attribute.org/${var.github_org}"
+  ]
+}
 
 # resource "google_compute_instance" "github_runner" {
 #   name         = "github-runner"
