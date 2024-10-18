@@ -66,6 +66,18 @@ variable "github_repository" {
   type        = string
 }
 
+# define the GitHub repository owner variable
+variable "github_repository_owner" {
+  description = "The GitHub repository owner"
+  type        = string
+}
+
+# Define the GitHub ORG variable
+variable "github_org" {
+  description = "The GitHub organization"
+  type        = string
+}
+
 # Deine the GitHub runner token
 variable "github_runner_token" {
   description = "The GitHub runner token"

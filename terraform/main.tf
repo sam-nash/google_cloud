@@ -38,12 +38,12 @@ resource "google_iam_workload_identity_pool_provider" "provider" {
     issuer_uri = "https://token.actions.githubusercontent.com"
   }
   attribute_mapping = {
-    "google.subject"  = "assertion.sub"
-    "attribute.actor" = "assertion.actor"
+    "google.subject"       = "assertion.sub"
+    "attribute.actor"      = "assertion.actor"
     "attribute.repository" = "assertion.repository"
-    "attribute.aud"   = "assertion.aud"
+    "attribute.aud"        = "assertion.aud"
   }
-  attribute_condition = "attribute.repository == \"${var.github_repository}\""
+  attribute_condition = "attribute.org == \"${var.github_org}\""
 }
 
 # Create a Service Account
@@ -53,56 +53,56 @@ resource "google_service_account" "sa" {
 }
 
 # Grant the Workload Identity User role to the service account
-resource "google_service_account_iam_binding" "binding" {
-  service_account_id = google_service_account.sa.name
-  role               = "roles/iam.workloadIdentityUser"
-  members = [
-    "principalSet://iam.googleapis.com/projects/${var.project_number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.pool.workload_identity_pool_id}/attribute.repository/${var.github_repository}"
-  ]
-}
+# resource "google_service_account_iam_binding" "binding" {
+#   service_account_id = google_service_account.sa.name
+#   role               = "roles/iam.workloadIdentityUser"
+#   members = [
+#     "principalSet://iam.googleapis.com/projects/${var.project_number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.pool.workload_identity_pool_id}/attribute.org/${var.github_org}"
+#   ]
+# }
 
 
-resource "google_compute_instance" "github_runner" {
-  name         = "github-runner"
-  machine_type = "e2-medium"
-  zone         = var.zone
+# resource "google_compute_instance" "github_runner" {
+#   name         = "github-runner"
+#   machine_type = "e2-medium"
+#   zone         = var.zone
 
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-11"
-    }
-  }
+#   boot_disk {
+#     initialize_params {
+#       image = "debian-cloud/debian-11"
+#     }
+#   }
 
-  network_interface {
-    network = "default"
+#   network_interface {
+#     network = "default"
 
-    access_config {
-      // Ephemeral IP
-    }
-  }
+#     access_config {
+#       // Ephemeral IP
+#     }
+#   }
 
-  metadata_startup_script = <<-EOF
-    #!/bin/bash
-    set -e
+#   metadata_startup_script = <<-EOF
+#     #!/bin/bash
+#     set -e
 
-    # Update and install dependencies
-    apt-get update
-    apt-get install -y curl jq
+#     # Update and install dependencies
+#     apt-get update
+#     apt-get install -y curl jq
 
-    # Download the GitHub Actions runner
-    curl -o actions-runner-linux-x64.tar.gz -L "https://github.com/actions/runner/releases/download/v2.278.0/actions-runner-linux-x64-2.278.0.tar.gz"
-    tar xzf actions-runner-linux-x64.tar.gz
+#     # Download the GitHub Actions runner
+#     curl -o actions-runner-linux-x64.tar.gz -L "https://github.com/actions/runner/releases/download/v2.278.0/actions-runner-linux-x64-2.278.0.tar.gz"
+#     tar xzf actions-runner-linux-x64.tar.gz
 
-    # Configure the runner
-    ./config.sh --url https://github.com/sam-nash/gh-actions --token ${var.github_runner_token} --unattended --replace
+#     # Configure the runner
+#     ./config.sh --url https://github.com/sam-nash/gh-actions --token ${var.github_runner_token} --unattended --replace
 
-    # Install and start the runner service
-    ./run.sh
-  EOF
+#     # Install and start the runner service
+#     ./run.sh
+#   EOF
 
-  tags = ["github-runner"]
-}
+#   tags = ["github-runner"]
+# }
 
-output "instance_name" {
-  value = google_compute_instance.github_runner.name
-}
+# output "instance_name" {
+#   value = google_compute_instance.github_runner.name
+# }
