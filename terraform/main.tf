@@ -4,6 +4,22 @@ provider "google" {
   region  = var.region
 }
 
+# Create a GCS bucket for Terraform state
+resource "google_storage_bucket" "terraform_state" {
+  name     = "${var.project_id}-terraform-state"
+  location = var.region
+  force_destroy = true
+
+  lifecycle_rule {
+    action {
+      type = "Delete"
+    }
+    condition {
+      age = 365
+    }
+  }
+}
+
 # Enable necessary Google Cloud APIs
 resource "google_project_service" "iam" {
   service = "iam.googleapis.com"
