@@ -1,5 +1,2 @@
 # exclude all files in terraform folder except .tf files
 terraform-example/* 
-!terraform-example/*.tf
-!terraform-example/*.md
-!terraform/*.tfvars
