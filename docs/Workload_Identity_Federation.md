@@ -1,6 +1,6 @@
 # Workload Identity Federation
 
-In modern cloud environments, managing credentials securely and efficiently is crucial. Workload Identity Federation (WIF) is a feature provided by Google Cloud that allows you to securely access Google Cloud resources without needing to manage long-lived service account keys. This README will guide you through understanding what Workload Identity Federation is, why it's needed, and how to set it up.
+Workload Identity Federation (WIF) is a feature provided by Google Cloud that allows you to securely access Google Cloud resources without needing to manage long-lived service account keys. This README will guide you through understanding what Workload Identity Federation is, why it's needed, and how to set it up.
 
 The examples in this documentation will demonstrate how the terraform changes to set up GCP Resources changes in one GitHub repository can trigger a GitHub Action in another repository to apply a Terraform plan.
 
