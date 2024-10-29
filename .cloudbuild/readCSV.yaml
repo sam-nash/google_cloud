@@ -9,7 +9,7 @@ steps:
       - |
         apk add --no-cache bash
 
-        tail -n +2 "$CSV_FILE" | while IFS=, read -r name1 name2 name3 name4 name5; do
+        tail -n +2 "./config.csv" | while IFS=, read -r name1 name2 name3 name4 name5; do
             echo "Processing line: $name1, $name2, $name3, $name4, $name5"  # Print each line for debugging
             if [[ "$name1" == "new1" ]]; then
                 echo "name1=$name1" && echo "name2=$name2" && echo "name3=$name3" && echo "name4=$name4" && echo "name5=$name5"
