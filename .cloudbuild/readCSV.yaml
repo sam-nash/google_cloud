@@ -14,4 +14,4 @@ steps:
             if [[ "$name1" == "new1" ]]; then
                 echo "name1=$name1" && echo "name2=$name2" && echo "name3=$name3" && echo "name4=$name4" && echo "name5=$name5"
             fi
-        done < "$CSV_FILE"
+        done < "./config.csv"
