@@ -30,6 +30,12 @@ gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
   --role="roles/storage.objectAdmin"
 ```
 
+Step 1c - Create the logs bucket
+
+```sh
+gcloud storage buckets create gs://test_cloudbuild_logs --project=YOUR_PROJECT_ID
+```
+
 Step 2 - Connect Your GitHub Repository: Link your GitHub repository to Google Cloud Build.
 
 Go to the Google Cloud Console.
