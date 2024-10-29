@@ -1,0 +1,1 @@
+# Cloud Build Config file that reads the config.csv file in the same repo and based on the input whic is the value of the first column reads the values into the corrwsponding column header names and echose the values to the console

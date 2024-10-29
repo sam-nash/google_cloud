@@ -15,3 +15,27 @@ The workflow consists of a single job named trigger, with a single step that use
 The curl command sends a POST request to the GitHub API endpoint for repository dispatch events. The request includes Authorization token which is a personal access token named `GH_DISPATCH_PAT` which is stored in the GitHub secrets. 
 
 The body of the POST request (-d) contains a JSON payload with two fields: event_type and client_payload. The event_type is set to "terraform_apply", which is a custom event type that can be used to trigger specific workflows in the target repository. So in our target repository we have a workflow that has the event called  repository_dispatch with types: [terraform_apply] that gets triggered when it receives this call. The client_payload includes additional data, in this case, the repository name, which is dynamically populated using the ${{ github.repository }} expression.
+
+## Run Cloud Build on commit to Giuthub Repo
+
+Step 1 - Enable Cloud Build API: Ensure that the Cloud Build API is enabled in your GCP project.
+
+```gcloud services enable cloudbuild.googleapis.com```
+
+Step 2 - Connect Your GitHub Repository: Link your GitHub repository to Google Cloud Build.
+
+Go to the Google Cloud Console.
+Navigate to Cloud Build > Triggers.
+Click on Connect Repository.
+Select GitHub and follow the prompts to authorize and connect your GitHub account.
+Select the repository you want to connect.
+
+Step 3 - Create a Build Trigger: Create a trigger that runs your Cloud Build configuration whenever there is a commit to the repository.
+
+In the Triggers section of Cloud Build, click on Create Trigger.
+Configure the trigger with the following settings:
+Name: Give your trigger a name.
+Event: Select Push to a branch.
+Source: Select the repository and branch you want to monitor.
+Build Configuration: Choose Cloud Build configuration file (yaml or json).
+Cloud Build configuration file location: Enter the path to your cloudbuild.yaml file (e.g., readCSV.yaml).
