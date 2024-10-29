@@ -1,4 +1,5 @@
 # Cloudbuild file to read CSV file and print the values based on the input parameters
+logsBucket: $PROJECT_ID_cloudbuild_logs
 steps:
   - name: "alpine"
     entrypoint: "sh"
