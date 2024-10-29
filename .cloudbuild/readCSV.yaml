@@ -1,6 +1,7 @@
+# Cloudbuild file to read CSV file and print the values based on the input parameters
+logsBucket: $PROJECT_ID_cloudbuild_logs
 substitutions:
   _INPUT_PARAM: "value1"
-logsBucket: "$PROJECT_ID_cloudbuild_logs"
 steps:
   - name: "alpine"
     entrypoint: "sh"
@@ -9,9 +10,8 @@ steps:
       - |
         apk add --no-cache bash
         INPUT_PARAM="${_INPUT_PARAM}"
-        CSV_FILE="config.csv"
+        CSV_FILE="../config.csv"
         while IFS=, read -r name1 name2 name3 name4 name5; do
             if [[ "$name1" == "$INPUT_PARAM" ]]; then
                 echo "name1=$name1" && echo "name2=$name2" && echo "name3=$name3" && echo "name4=$name4" && echo "name5=$name5"
-            fi
         done < "$CSV_FILE"
