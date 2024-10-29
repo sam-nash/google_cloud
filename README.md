@@ -35,11 +35,11 @@ gcloud projects add-iam-policy-binding gh-actions-1506 \
 
 Step 2 - Connect Your GitHub Repository: Link your GitHub repository to Google Cloud Build.
 
-Go to the Google Cloud Console.
-Navigate to Cloud Build > Triggers.
-Click on Connect Repository.
-Select GitHub and follow the prompts to authorize and connect your GitHub account.
-Select the repository you want to connect.
+  - Go to the Google Cloud Console.
+  - Navigate to Cloud Build > Triggers.
+  - Click on Connect Repository.
+  - Select GitHub and follow the prompts to authorize and connect your GitHub account.
+  - Select the repository you want to connect.
 
 Step 3 - Create a Build Trigger: Create a trigger that runs your Cloud Build configuration whenever there is a commit to the repository.
 
@@ -50,3 +50,5 @@ Event: Select Push to a branch.
 Source: Select the repository and branch you want to monitor.
 Build Configuration: Choose Cloud Build configuration file (yaml or json).
 Cloud Build configuration file location: Enter the path to your cloudbuild.yaml file (e.g., readCSV.yaml).
+
+[Screenshots](docs/GH-Trigger-CloudBuild) for reference
