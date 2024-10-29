@@ -1,3 +1,5 @@
+logsBucket: test_cloudbuild_logs
+
 steps:
   - name: "alpine"
     entrypoint: "sh"
