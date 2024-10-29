@@ -12,4 +12,5 @@ steps:
         while IFS=, read -r name1 name2 name3 name4 name5; do
             if [[ "$name1" == "value1" ]]; then
                 echo "name1=$name1" && echo "name2=$name2" && echo "name3=$name3" && echo "name4=$name4" && echo "name5=$name5"
+            fi
         done < "../config.csv"
