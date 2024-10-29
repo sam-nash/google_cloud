@@ -1,7 +1,6 @@
 # Cloudbuild file to read CSV file and print the values based on the input parameters
 logsBucket: test_cloudbuild_logs
-# substitutions:
-#   _INPUT_PARAM: "value1"
+
 steps:
   - name: "alpine"
     entrypoint: "sh"
