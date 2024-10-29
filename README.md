@@ -18,9 +18,17 @@ The body of the POST request (-d) contains a JSON payload with two fields: event
 
 ## Run Cloud Build on commit to Giuthub Repo
 
-Step 1 - Enable Cloud Build API: Ensure that the Cloud Build API is enabled in your GCP project.
+Step 1a - Enable Cloud Build API: Ensure that the Cloud Build API is enabled in your GCP project.
 
 ```gcloud services enable cloudbuild.googleapis.com```
+
+Step 1b - Grant the storage object viewer permissions to the service account
+
+```sh
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \           
+  --member="serviceAccount:ghactions-sa@gh-actions-1506.iam.gserviceaccount.com" \
+  --role="roles/storage.objectAdmin"
+```
 
 Step 2 - Connect Your GitHub Repository: Link your GitHub repository to Google Cloud Build.
 
