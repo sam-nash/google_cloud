@@ -22,24 +22,15 @@ Step 1a - Enable Cloud Build API: Ensure that the Cloud Build API is enabled in 
 
 ```gcloud services enable cloudbuild.googleapis.com```
 
-Step 1b - Grant the storage object admin permissions to the service account
+Step 1b - Give the service account explicit access to the logs bucket
 
 ```sh
-gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \           
+gsutil iam ch serviceAccount:ghactions-sa@gh-actions-1506.iam.gserviceaccount.com:admin gs://test_cloudbuild_logs
+
+gcloud projects add-iam-policy-binding gh-actions-1506 \
   --member="serviceAccount:ghactions-sa@gh-actions-1506.iam.gserviceaccount.com" \
-  --role="roles/storage.objectAdmin"
-```
+  --role="roles/logging.logWriter"
 
-Step 1c - Create the logs bucket
-
-```sh
-gcloud storage buckets create gs://test_cloudbuild_logs --project=YOUR_PROJECT_ID
-```
-
-Step 1d - Give the service account explicit access tot he logs bucket
-
-```sh
-gsutil iam ch serviceAccount:ghactions-sa@gh-actions-1506.iam.gserviceaccount.com:objectAdmin gs://test_cloudbuild_logs
 ```
 
 Step 2 - Connect Your GitHub Repository: Link your GitHub repository to Google Cloud Build.
