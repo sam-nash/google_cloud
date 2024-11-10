@@ -64,7 +64,7 @@ resource "google_iam_workload_identity_pool" "pool" {
 resource "google_iam_workload_identity_pool_provider" "provider" {
   count                              = var.pool_id != "" ? 1 : 0
   provider                           = google
-  workload_identity_pool_id          = google_iam_workload_identity_pool.pool.workload_identity_pool_id
+  workload_identity_pool_id          = google_iam_workload_identity_pool.pool[count.index].workload_identity_pool_id
   workload_identity_pool_provider_id = var.provider_id
   display_name                       = var.provider_display_name
   oidc {
@@ -85,7 +85,7 @@ resource "google_service_account_iam_binding" "binding" {
   service_account_id = google_service_account.sa.name
   role               = "roles/iam.workloadIdentityUser"
   members = [
-    "principalSet://iam.googleapis.com/projects/${var.project_number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.pool.workload_identity_pool_id}/attribute.org/${var.github_org}"
+    "principalSet://iam.googleapis.com/projects/${var.project_number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.pool[count.index].workload_identity_pool_id}/attribute.org/${var.github_org}"
   ]
 }
 
