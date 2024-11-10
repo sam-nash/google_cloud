@@ -63,7 +63,7 @@ jobs:
             -d "{\"event_type\":\"terraform_${{ env.TF_ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"tag_name\": \"${{ env.TAG_NAME }}\"}}"
 
       - name: Trigger Terraform Workflow for PR
-        if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+        if: github.event_name == 'pull_request'
         run: |
           echo "This was triggered as a result of PR Number: ${{ github.event.pull_request.number }} being ${{ github.event.action }}"
           curl -X POST \
