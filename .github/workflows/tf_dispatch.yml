@@ -35,9 +35,9 @@ jobs:
             TAG_NAME=${GITHUB_REF#refs/tags/}
             TF_ACTION=$(echo $TAG_NAME | cut -d'_' -f2)
             GCP_PROJECT=$(echo $TAG_NAME | cut -d'_' -f1)
-            echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
-            echo "TF_ACTION=$TF_ACTION" >> $GITHUB_OUTPUT
-            echo "GCP_PROJECT=$GCP_PROJECT" >> $GITHUB_OUTPUT
+            echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+            echo "TF_ACTION=$TF_ACTION" >> $GITHUB_ENV
+            echo "GCP_PROJECT=$GCP_PROJECT" >> $GITHUB_ENV
             echo "The Tag Name is: $TAG_NAME"
             echo "The Terraform Action is: $TF_ACTION"
             echo "The Target GCP Project is: $GCP_PROJECT"
@@ -47,7 +47,7 @@ jobs:
             else
               ACTION="plan"
             fi
-            echo "ACTION=$ACTION" >> $GITHUB_OUTPUT
+            echo "ACTION=$ACTION" >> $GITHUB_ENV
           fi
 
       - name: Trigger Terraform Workflow
@@ -57,7 +57,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/sam-nash/gh-actions/dispatches \
-            -d "{\"event_type\":\"terraform_${{ steps.extract_info.outputs.ACTION}}, \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ steps.extract_info.outputs.GCP_PROJECT }}\", \"tag_name\": \"${{ steps.extract_info.outputs.TAG_NAME }}\"}}"
+            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"tag_name\": \"${{ env.TAG_NAME }}\"}}"
 
       - name: Trigger Terraform Workflow for PR
         if: github.event_name == 'pull_request'
@@ -66,4 +66,4 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/sam-nash/gh-actions/dispatches \
-            -d "{\"event_type\":\"terraform_$ACTION\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"pr_number\": \"${{ github.event.pull_request.number }}\", \"action\": \"${{ steps.extract_info.outputs.ACTION }}\"}}"
+            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"pr_number\": \"${{ github.event.pull_request.number }}\", \"action\": \"${{ steps.extract_info.outputs.ACTION }}\"}}"
