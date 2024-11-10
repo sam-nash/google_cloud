@@ -1,22 +1,23 @@
 name: Trigger Terraform Workflow
 
+# Trigger on applying tag to master branch with a certain value example sam-nash
 on:
   push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-
+    tags:
+      - 'refs/tags/[a-z]*-[a-z]*'
 jobs:
   trigger:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Extract the GCP Project Name from the Tag Name
+        id: extract_tag
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
       - name: Trigger Terraform Workflow
         run: |
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/sam-nash/gh-actions/dispatches \
-            -d '{"event_type":"terraform_apply", "client_payload": {"repository": "${{ github.repository }}"}}'
+            -d "{\"event_type\":\"terraform_apply\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"gcp_project\": \"${{ steps.extract_tag.outputs.TAG_NAME }}\"}}"
