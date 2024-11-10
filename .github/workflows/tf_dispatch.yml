@@ -69,4 +69,4 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/sam-nash/gh-actions/dispatches \
-            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"pr_number\": \"${{ github.event.pull_request.number }}\", \"action\": \"${{ steps.extract_info.outputs.ACTION }}\"}}"
+            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"pr_number\": \"${{ github.event.pull_request.number }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"action\": \"${{ steps.extract_info.outputs.ACTION }}\"}}"
