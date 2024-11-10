@@ -57,7 +57,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/sam-nash/gh-actions/dispatches \
-            -d "{\"event_type\":\"terraform_$ACTION", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ steps.extract_info.outputs.GCP_PROJECT }}\", \"tag_name\": \"${{ steps.extract_info.outputs.TAG_NAME }}\"}}"
+            -d "{\"event_type\":\"terraform_${ACTION}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ steps.extract_info.outputs.GCP_PROJECT }}\", \"tag_name\": \"${{ steps.extract_info.outputs.TAG_NAME }}\"}}"
 
       - name: Trigger Terraform Workflow for PR
         if: github.event_name == 'pull_request'
