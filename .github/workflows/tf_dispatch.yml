@@ -20,7 +20,7 @@ jobs:
         run: |
           TAG_NAME=${GITHUB_REF#refs/tags/}
           GCP_PROJECT=${TAG_NAME%_*}
-          echo "GCP_PROJECT=$GCP_PROJECT" >> $GITHUB_ENV
+          echo "GCP_PROJECT=$GCP_PROJECT" >> $GITHUB_OUTPUT
           echo "The Target GCP Project is: $GCP_PROJECT"
 
 
@@ -30,4 +30,4 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/sam-nash/gh-actions/dispatches \
-            -d "{\"event_type\":\"terraform_apply\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"gcp_project\": \"${{ steps.extract_tag.outputs.TAG_NAME }}\"}}"
+            -d "{\"event_type\":\"terraform_apply\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"gcp_project\": \"${{ steps.extract_tag.outputs.GCP_PROJECT }}\"}}"
