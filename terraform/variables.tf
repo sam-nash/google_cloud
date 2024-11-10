@@ -22,24 +22,28 @@ variable "zone" {
 variable "pool_id" {
   description = "The ID of the workload identity pool"
   type        = string
+  default     = ""
 }
 
 # Define the workload identity pool display name variable
 variable "pool_display_name" {
   description = "The display name of the workload identity pool"
   type        = string
+  default     = ""
 }
 
 # Define the workload identity provider ID variable
 variable "provider_id" {
   description = "The ID of the workload identity pool provider"
   type        = string
+  default     = ""
 }
 
 # Define the workload identity provider display name variable
 variable "provider_display_name" {
   description = "The display name of the workload identity pool provider"
   type        = string
+  default     = ""
 }
 
 # Define the service account ID variable
@@ -64,16 +68,19 @@ variable "project_number" {
 variable "github_repository" {
   description = "The GitHub repository"
   type        = string
+  default = ""
 }
 
 # define the GitHub repository owner variable
 variable "github_repository_owner" {
   description = "The GitHub repository owner"
   type        = string
+  default = ""
 }
 
 # Define the GitHub ORG variable
 variable "github_org" {
   description = "The GitHub organization"
   type        = string
+  default = ""
 }
