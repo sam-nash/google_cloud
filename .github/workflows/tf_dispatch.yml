@@ -4,7 +4,7 @@ name: Trigger Terraform Workflow
 on:
   push:
     tags:
-      - 'refs/tags/[a-z]+-[a-z]+_[0-9]+'
+      - '[a-z]+-[a-z]+_[0-9]+'
 
 jobs:
   trigger:
@@ -14,6 +14,7 @@ jobs:
       # Debug step to print the GITHUB_REF
       - name: Print GITHUB_REF
         run: echo "GITHUB_REF=${GITHUB_REF}"
+
       - name: Extract the GCP Project Name from the Tag Name
         id: extract_tag
         run: |
