@@ -1,4 +1,4 @@
-project_id                   = "gh-actions-1506"
+project_id                   = "sam-nash"
 region                       = "asia-southeast1"
 zone                         = "asia-southeast1-a"
 service_account_id           = "project-sa"
