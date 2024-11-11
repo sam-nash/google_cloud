@@ -22,11 +22,28 @@ jobs:
       # Debug step to print the GITHUB_REF
       - name: Print GITHUB_REF
         if: github.event_name == 'push'
-        run: echo "GITHUB_REF=${GITHUB_REF}"
+        run: |
+          echo "GITHUB_REF=${GITHUB_REF}"
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
       - name: Print PR Information
         if: github.event_name == 'pull_request'
         run: |
+          # Get the latest TAG Name from the source branch
+          SOURCE_BRANCH="${{ github.event.pull_request.head.ref }}"
+          git fetch origin "refs/tags/*:refs/tags/*"
+
+          # Get latest tag on the source branch
+          TAG_NAME=$(git ls-remote --tags origin "$SOURCE_BRANCH" | awk -F/ '{print $NF}' | tail -n 1)
+
+          # Output the tag
+          if [ -z "$TAG_NAME" ]; then
+            echo "No tags found on the source branch: $SOURCE_BRANCH"
+          else
+            echo "The latest tag on the source branch ($SOURCE_BRANCH) is: $TAG_NAME"
+            echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          fi
           echo "PR Number: ${{ github.event.pull_request.number }}"
           echo "PR Action: ${{ github.event.action }}"
           echo "PR Merged: ${{ github.event.pull_request.merged }}"
@@ -34,9 +51,7 @@ jobs:
       - name: Extract Information from Tag or PR
         id: extract_info
         run: |
-          TAG_NAME=${GITHUB_REF#refs/tags/}
           GCP_PROJECT=$(echo $TAG_NAME | cut -d'_' -f1)
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
           echo "GCP_PROJECT=$GCP_PROJECT" >> $GITHUB_ENV
           echo "The Tag Name is: $TAG_NAME"
           echo "The Target GCP Project is: $GCP_PROJECT"
