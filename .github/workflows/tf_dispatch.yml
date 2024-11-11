@@ -14,6 +14,9 @@ on:
 jobs:
   trigger:
     runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true)
 
     steps:
       # Debug step to print the GITHUB_REF
@@ -53,7 +56,7 @@ jobs:
       - name: Trigger Terraform Workflow for Push Commits
         if: github.event_name == 'push'
         run: |
-          echo "This was triggered as a result of the Event: ${{ github.event_name }} being ${{ github.event.action }}"
+          echo "This was triggered as a result of the Event: ${{ github.event_name }} commits"
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
