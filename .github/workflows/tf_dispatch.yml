@@ -19,6 +19,9 @@ jobs:
       (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true)
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
       # Debug step to print the GITHUB_REF
       - name: Print GITHUB_REF
         if: github.event_name == 'push'
