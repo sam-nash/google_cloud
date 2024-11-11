@@ -50,14 +50,15 @@ jobs:
           echo "The Terraform Action is: $ACTION"
           
 
-      - name: Trigger Terraform Workflow
+      - name: Trigger Terraform Workflow for Push Commits
         if: github.event_name == 'push'
         run: |
+          echo "This was triggered as a result of the Event: ${{ github.event_name }} being ${{ github.event.action }}"
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/sam-nash/gh-actions/dispatches \
-            -d "{\"event_type\":\"terraform_${{ env.TF_ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"tag_name\": \"${{ env.TAG_NAME }}\"}}"
+            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"tag_name\": \"${{ env.TAG_NAME }}\"}}"
 
       - name: Trigger Terraform Workflow for PR
         if: github.event_name == 'pull_request'
