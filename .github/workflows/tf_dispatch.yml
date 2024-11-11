@@ -31,26 +31,23 @@ jobs:
       - name: Extract Information from Tag or PR
         id: extract_info
         run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          GCP_PROJECT=$(echo $TAG_NAME | cut -d'_' -f1)
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          echo "GCP_PROJECT=$GCP_PROJECT" >> $GITHUB_ENV
+          echo "The Tag Name is: $TAG_NAME"
+          echo "The Target GCP Project is: $GCP_PROJECT"
           if [[ "${{ github.event_name }}" == "push" ]]; then
-            TAG_NAME=${GITHUB_REF#refs/tags/}
-            TF_ACTION=$(echo $TAG_NAME | cut -d'_' -f2)
-            # convert to lowercase
-            TF_ACTION=$(echo $TF_ACTION | tr '[:upper:]' '[:lower:]')
-            GCP_PROJECT=$(echo $TAG_NAME | cut -d'_' -f1)
-            echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-            echo "TF_ACTION=$TF_ACTION" >> $GITHUB_ENV
-            echo "GCP_PROJECT=$GCP_PROJECT" >> $GITHUB_ENV
-            echo "The Tag Name is: $TAG_NAME"
-            echo "The Target GCP Project is: $GCP_PROJECT"
+            ACTION="plan"
           elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
             if [[ "${{ github.event.action }}" == "closed" && "${{ github.event.pull_request.merged }}" == "true" ]]; then
               ACTION="apply"
             else
               ACTION="plan"
             fi
-            echo "ACTION=$ACTION" >> $GITHUB_ENV
-            echo "The Terraform Action is: $ACTION"
           fi
+          echo "ACTION=$ACTION" >> $GITHUB_ENV
+          echo "The Terraform Action is: $ACTION"
           
 
       - name: Trigger Terraform Workflow
