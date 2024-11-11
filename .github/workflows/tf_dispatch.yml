@@ -4,8 +4,8 @@ on:
   push:
     tags:
       - '[a-z]+-[a-z]+_PLAN_[0-9]+'
-    branches:
-      - 'feature/*'
+    # branches:
+    #   - 'feature/*'
   pull_request:
     types: [opened, closed]
     branches:
