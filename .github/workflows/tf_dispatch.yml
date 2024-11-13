@@ -4,8 +4,8 @@ on:
   push:
     tags:
       - '[a-z]+-[a-z]+_PLAN_[0-9]+'
-    branches:
-      - 'feature/*'
+    # branches:
+    #   - 'feature/*'
   pull_request:
     types: [opened, closed]
     branches:
@@ -14,16 +14,38 @@ on:
 jobs:
   trigger:
     runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action == 'opened') || 
+      (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true)
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       # Debug step to print the GITHUB_REF
-      - name: Print GITHUB_REF
-        if: github.event_name == 'push'
-        run: echo "GITHUB_REF=${GITHUB_REF}"
+      - name: Retrieve GitHub Data
+        if: github.event_name == 'push' || github.event_name == 'pull_request' 
+        run: |
+          echo "GITHUB_REF=${GITHUB_REF}"
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
       - name: Print PR Information
         if: github.event_name == 'pull_request'
         run: |
+          # Get the latest TAG Name from the source branch
+          git fetch --tags
+          
+          # Get latest tag
+          TAG_NAME=$(git tag --sort=-creatordate | head -n 1)
+          
+          # Output the tag
+          if [ -z "$TAG_NAME" ]; then
+            echo "No tags found on the source branch: $SOURCE_BRANCH"
+          else
+            echo "The latest tag on the source branch ($SOURCE_BRANCH) is: $TAG_NAME"
+            echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          fi
           echo "PR Number: ${{ github.event.pull_request.number }}"
           echo "PR Action: ${{ github.event.action }}"
           echo "PR Merged: ${{ github.event.pull_request.merged }}"
@@ -31,39 +53,39 @@ jobs:
       - name: Extract Information from Tag or PR
         id: extract_info
         run: |
+          GCP_PROJECT=$(echo $TAG_NAME | cut -d'_' -f1)
+          echo "GCP_PROJECT=$GCP_PROJECT" >> $GITHUB_ENV
+          echo "The Tag Name is: $TAG_NAME"
+          echo "The Target GCP Project is: $GCP_PROJECT"
           if [[ "${{ github.event_name }}" == "push" ]]; then
-            TAG_NAME=${GITHUB_REF#refs/tags/}
-            TF_ACTION=$(echo $TAG_NAME | cut -d'_' -f2)
-            GCP_PROJECT=${TAG_NAME%_*}
-            echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
-            echo "TF_ACTION=$TF_ACTION" >> $GITHUB_OUTPUT
-            echo "GCP_PROJECT=$GCP_PROJECT" >> $GITHUB_OUTPUT
-            echo "The Tag Name is: $TAG_NAME"
-            echo "The Terraform Action is: $TF_ACTION"
-            echo "The Target GCP Project is: $GCP_PROJECT"
+            ACTION="plan"
           elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
             if [[ "${{ github.event.action }}" == "closed" && "${{ github.event.pull_request.merged }}" == "true" ]]; then
               ACTION="apply"
             else
               ACTION="plan"
             fi
-            echo "ACTION=$ACTION" >> $GITHUB_OUTPUT
           fi
+          echo "ACTION=$ACTION" >> $GITHUB_ENV
+          echo "The Terraform Action is: $ACTION"
+          
 
-      - name: Trigger Terraform Workflow
+      - name: Trigger Terraform Workflow for Push Commits
         if: github.event_name == 'push'
         run: |
+          echo "This was triggered as a result of the Event: ${{ github.event_name }} commits"
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/sam-nash/gh-actions/dispatches \
-            -d "{\"event_type\":\"terraform_apply\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ steps.extract_info.outputs.GCP_PROJECT }}\", \"tag_name\": \"${{ steps.extract_info.outputs.TAG_NAME }}\"}}"
+            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"tag_name\": \"${{ env.TAG_NAME }}\"}}"
 
       - name: Trigger Terraform Workflow for PR
         if: github.event_name == 'pull_request'
         run: |
+          echo "This was triggered as a result of PR Number: ${{ github.event.pull_request.number }} being ${{ github.event.action }}"
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/sam-nash/gh-actions/dispatches \
-            -d "{\"event_type\":\"terraform_${{ steps.extract_info.outputs.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"pr_number\": \"${{ github.event.pull_request.number }}\", \"action\": \"${{ steps.extract_info.outputs.ACTION }}\"}}"
+            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"pr_number\": \"${{ github.event.pull_request.number }}\", \"pr_event\": \"${{ github.event.action }}\", \"pr_merged\": \"${{ github.event.pull_request.merged  }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"action\": \"${{ env.ACTION }}\"}}"
