@@ -91,7 +91,7 @@ resource "google_service_account_iam_binding" "binding" {
 
 # Create a normal compute Instance
 resource "google_compute_instance" "vm_instance" {
-  name         = "my-vm-instance"
+  name         = var.instance_name
   machine_type = "e2-medium"
   zone         = var.zone
 

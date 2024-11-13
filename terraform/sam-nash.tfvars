@@ -1,6 +1,7 @@
 project_id                   = "sam-nash"
 region                       = "asia-southeast1"
 zone                         = "asia-southeast1-a"
-service_account_id           = "project-sa"
+instance_name                = "sam-nash"
+service_account_id           = "proj-sa"
 service_account_display_name = "Project Default SA"
 project_number               = "180855126385"
