@@ -23,11 +23,13 @@ jobs:
         uses: actions/checkout@v2
 
       # Debug step to print the GITHUB_REF
-      - name: Print GITHUB_REF
-        if: github.event_name == 'push'
+      - name: Retrieve GitHub Data
+        if: github.event_name == 'push' || github.event_name == 'pull_request' 
         run: |
           echo "GITHUB_REF=${GITHUB_REF}"
           TAG_NAME=${GITHUB_REF#refs/tags/}
+          REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)
+          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
       - name: Print PR Information
@@ -78,13 +80,11 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/sam-nash/gh-actions/dispatches \
-            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"tag_name\": \"${{ env.TAG_NAME }}\"}}"
+            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ env.REPO_NAME }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"tag_name\": \"${{ env.TAG_NAME }}\"}}"
 
       - name: Trigger Terraform Workflow for PR
         if: github.event_name == 'pull_request'
         run: |
-          REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)
-          echo REPO_NAME=$REPO_NAME >> $GITHUB_ENV
           echo "This was triggered as a result of PR Number: ${{ github.event.pull_request.number }} being ${{ github.event.action }}"
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
