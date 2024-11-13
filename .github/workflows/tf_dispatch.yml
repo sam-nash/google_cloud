@@ -83,9 +83,11 @@ jobs:
       - name: Trigger Terraform Workflow for PR
         if: github.event_name == 'pull_request'
         run: |
+          REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)
+          echo REPO_NAME=$REPO_NAME >> $GITHUB_ENV
           echo "This was triggered as a result of PR Number: ${{ github.event.pull_request.number }} being ${{ github.event.action }}"
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/sam-nash/gh-actions/dispatches \
-            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"pr_number\": \"${{ github.event.pull_request.number }}\", \"pr_event\": \"${{ github.event.action }}\", \"pr_merged\": \"${{ github.event.pull_request.merged  }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"action\": \"${{ env.ACTION }}\"}}"
+            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ env.REPO_NAME }}\", \"pr_number\": \"${{ github.event.pull_request.number }}\", \"pr_event\": \"${{ github.event.action }}\", \"pr_merged\": \"${{ github.event.pull_request.merged  }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"action\": \"${{ env.ACTION }}\"}}"
