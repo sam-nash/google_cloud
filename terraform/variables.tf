@@ -32,6 +32,13 @@ variable "pool_display_name" {
   default     = ""
 }
 
+# Define compute instance name
+variable "instance_name" {
+  description = "The name of the compute instance"
+  type        = string
+  default     = "github-runner"
+}
+
 # Define the workload identity provider ID variable
 variable "provider_id" {
   description = "The ID of the workload identity pool provider"
