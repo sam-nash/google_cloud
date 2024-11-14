@@ -110,6 +110,26 @@ resource "google_compute_instance" "vm_instance" {
   }
 }
 
+resource "google_compute_instance" "vm_instance-2" {
+  name         = "my-vm-instance"
+  machine_type = "e2-medium"
+  zone         = var.zone
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-11"
+    }
+  }
+
+  network_interface {
+    network = "default"
+
+    access_config {
+      // Ephemeral IP
+    }
+  }
+}
+
 # resource "google_compute_instance" "github_runner" {
 #   name         = "github-runner"
 #   machine_type = "e2-medium"
