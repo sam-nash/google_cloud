@@ -89,26 +89,6 @@ resource "google_service_account_iam_binding" "binding" {
   ]
 }
 
-# Create a normal compute Instance
-resource "google_compute_instance" "vm_instance" {
-  name         = var.instance_name
-  machine_type = "e2-medium"
-  zone         = var.zone
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-11"
-    }
-  }
-
-  network_interface {
-    network = "default"
-
-    access_config {
-      // Ephemeral IP
-    }
-  }
-}
 
 # resource "google_compute_instance" "github_runner" {
 #   name         = "github-runner"
