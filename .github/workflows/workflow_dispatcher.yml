@@ -30,12 +30,12 @@ jobs:
 
       # Debug step to print the GITHUB_REF
       - name: Retrieve GitHub Data
-        if: github.event_name == 'push' || github.event_name == 'pull_request' 
+        if: github.event_name == 'push' 
         run: |
           echo "GITHUB_REF=${GITHUB_REF}"
           TAG_NAME=${GITHUB_REF#refs/tags/}
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-
+          
       - name: Print PR Information
         if: github.event_name == 'pull_request'
         run: |
@@ -65,14 +65,19 @@ jobs:
           echo "The Target GCP Project is: $GCP_PROJECT"
           if [[ "${{ github.event_name }}" == "push" ]]; then
             ACTION="plan"
+            REF_TO_CHECKOUT=$GITHUB_REF
           elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
             if [[ "${{ github.event.action }}" == "closed" && "${{ github.event.pull_request.merged }}" == "true" ]]; then
               ACTION="apply"
+              REF_TO_CHECKOUT="${{ github.event.pull_request.base.ref }}"
             else
               ACTION="plan"
+              REF_TO_CHECKOUT="${{ github.event.pull_request.head.ref }}"
             fi
           fi
           echo "ACTION=$ACTION" >> $GITHUB_ENV
+          echo "REF_TO_CHECKOUT=$REF_TO_CHECKOUT" >> $GITHUB_ENV
+          echo The GitHUb Ref is: $REF_TO_CHECKOUT
           echo "The Terraform Action is: $ACTION"
           
 
@@ -84,7 +89,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/${{ vars.GHA_REPO }}/dispatches \
-            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"tag_name\": \"${{ env.TAG_NAME }}\"}}"
+            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"tag_name\": \"${{ env.TAG_NAME }}\", \"checkout_ref\": \"${{ env.REF_TO_CHECKOUT }}\"}}"
 
       - name: Trigger Terraform Workflow for PR
         if: github.event_name == 'pull_request'
@@ -94,4 +99,4 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GH_DISPATCH_PAT }}" \
             https://api.github.com/repos/${{ vars.GHA_REPO }}/dispatches \
-            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"pr_number\": \"${{ github.event.pull_request.number }}\", \"pr_event\": \"${{ github.event.action }}\", \"pr_merged\": \"${{ github.event.pull_request.merged  }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"action\": \"${{ env.ACTION }}\"}}"
+            -d "{\"event_type\":\"terraform_${{ env.ACTION }}\", \"client_payload\": {\"repository\": \"${{ github.repository }}\", \"pr_number\": \"${{ github.event.pull_request.number }}\", \"pr_event\": \"${{ github.event.action }}\", \"pr_merged\": \"${{ github.event.pull_request.merged  }}\", \"project_name\": \"${{ env.GCP_PROJECT }}\", \"checkout_ref\": \"${{ env.REF_TO_CHECKOUT }}\",\"action\": \"${{ env.ACTION }}\"}}"
