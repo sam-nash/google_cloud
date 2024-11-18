@@ -24,8 +24,8 @@
         <mxCell id="DrhzgHVCxWxV7Y5xNwUa-28" value="Service Account" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="Lif8JBEafslfNm7ranTe-1">
           <mxGeometry x="40" y="131" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="DrhzgHVCxWxV7Y5xNwUa-29" value="Workload Identity federation" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="Lif8JBEafslfNm7ranTe-1">
-          <mxGeometry x="140" y="91" width="60" height="30" as="geometry" />
+        <mxCell id="DrhzgHVCxWxV7Y5xNwUa-29" value="CRUD Resources" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="Lif8JBEafslfNm7ranTe-1">
+          <mxGeometry x="120" y="121" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="Lif8JBEafslfNm7ranTe-3" value="" style="rounded=1;absoluteArcSize=1;arcSize=2;html=1;strokeColor=none;gradientColor=none;shadow=0;dashed=0;fontSize=12;fontColor=#9E9E9E;align=left;verticalAlign=top;spacing=10;spacingTop=-4;fillColor=#F1F8E9;" parent="1" vertex="1">
           <mxGeometry x="170" y="179" width="140" height="331" as="geometry" />
