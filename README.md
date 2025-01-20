@@ -52,3 +52,4 @@ Build Configuration: Choose Cloud Build configuration file (yaml or json).
 Cloud Build configuration file location: Enter the path to your cloudbuild.yaml file (e.g., readCSV.yaml).
 
 [Screenshots](docs/GH-Trigger-CloudBuild) for reference
+
