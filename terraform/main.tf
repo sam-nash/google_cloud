@@ -6,7 +6,7 @@ provider "google" {
 
 # Create a GCS bucket for Terraform state
 resource "google_storage_bucket" "terraform_state" {
-  name     = "${var.project_id}-terraform-state"
+  name     = "${var.project_id}-tfstate"
   location = var.region
   force_destroy = true
 
